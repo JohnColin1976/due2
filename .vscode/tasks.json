@@ -8,7 +8,7 @@
       "args": [
         "-E",
         "remove_directory",
-        "${workspaceFolder:due2}/build"
+        "${workspaceFolder}/build"
       ],
       "problemMatcher": []
     },
@@ -25,8 +25,8 @@
         ".",
         "-B",
         "build",
-        "-DCMAKE_TOOLCHAIN_FILE:FILEPATH=${workspaceFolder:due2}/cmake/arm-none-eabi.cmake",
-        "-DCMAKE_BUILD_TYPE=Release",
+        "-DCMAKE_TOOLCHAIN_FILE:FILEPATH=${workspaceFolder}/cmake/arm-none-eabi.cmake",
+        "-DCMAKE_BUILD_TYPE=Debug",
         "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
       ],
       "problemMatcher": []
@@ -34,63 +34,52 @@
     {
       "label": "Build (due2)",
       "type": "shell",
+      "dependsOn": "configure (due2)",
       "command": "cmake",
-      "args": ["--build", "${workspaceFolder:due2}/build", "--target", "all"],
+      "args": ["--build", "${workspaceFolder}/build", "--target", "all"],
       "problemMatcher": ["$gcc"],
       "group": "build"
     },
     {
-      "label": "Flash (J-Link, SAM3X8E, Due2)",
+      "label": "Flash APP (OpenOCD+J-Link, SAM3X8E, Due2)",
       "type": "shell",
       "dependsOn": "Build (due2)",
-      "command": "JLink.exe",
+      "command": "openocd",
       "args": [
-        "-NoGui",
-        "1",
-        "-CommandFile",
-        "${workspaceFolder:due2}/tools/jlink_flash_sam3x8e.jlink"
+        "-f",
+        "${workspaceFolder}/tools/openocd_jlink_swd_sam3x.cfg",
+        "-c",
+        "program ${workspaceFolder}/build/due_app.elf verify reset exit"
       ],
       "problemMatcher": []
     },
     {
-      "label": "Flash APP (J-Link, SAM3X8E, Due2)",
+      "label": "Flash Bootloader (OpenOCD+J-Link, SAM3X8E, Due2)",
       "type": "shell",
       "dependsOn": "Build (due2)",
-      "command": "JLink.exe",
+      "command": "openocd",
       "args": [
-        "-NoGui",
-        "1",
-        "-CommandFile",
-        "${workspaceFolder:due2}/tools/jlink_flash_sam3x8e_app.jlink"
+        "-f",
+        "${workspaceFolder}/tools/openocd_jlink_swd_sam3x.cfg",
+        "-c",
+        "program ${workspaceFolder}/build/due_bootloader.elf verify reset exit"
       ],
       "problemMatcher": []
     },
     {
-      "label": "Flash Bootloader (J-Link, SAM3X8E, Due2)",
+      "label": "Flash Full (BL+APP, OpenOCD+J-Link, Due2)",
       "type": "shell",
       "dependsOn": "Build (due2)",
-      "command": "JLink.exe",
+      "command": "openocd",
       "args": [
-        "-NoGui",
-        "1",
-        "-CommandFile",
-        "${workspaceFolder:due2}/tools/jlink_flash_sam3x8e_bootloader.jlink"
-      ],
-      "problemMatcher": []
-    },
-    {
-      "label": "Flash Full (BL+APP, J-Link, SAM3X8E, Due2)",
-      "type": "shell",
-      "dependsOn": "Build (due2)",
-      "command": "JLink.exe",
-      "args": [
-        "-NoGui",
-        "1",
-        "-CommandFile",
-        "${workspaceFolder:due2}/tools/jlink_flash_sam3x8e_full.jlink"
+        "-f",
+        "${workspaceFolder}/tools/openocd_jlink_swd_sam3x.cfg",
+        "-c",
+        "program ${workspaceFolder}/build/due_bootloader.elf verify",
+        "-c",
+        "program ${workspaceFolder}/build/due_app.elf verify reset exit"
       ],
       "problemMatcher": []
     }
   ]
 }
-

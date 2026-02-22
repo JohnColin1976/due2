@@ -2,56 +2,44 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Debug (J-Link, ATSAM3X8E)",
+      "name": "Debug APP (OpenOCD+J-Link, ATSAM3X8E)",
       "type": "cortex-debug",
       "request": "launch",
-      "servertype": "jlink",
-
-      "cwd": "${workspaceFolder:due2}",
-      "executable": "${workspaceFolder:due2}/build/due_app.elf",
-
+      "servertype": "openocd",
+      "cwd": "${workspaceFolder}",
+      "executable": "${workspaceFolder}/build/due_app.elf",
       "device": "ATSAM3X8E",
       "interface": "swd",
-
-      "serverpath": "C:\\JLink\\JLinkGDBServerCL.exe",
-
-      "armToolchainPath": "C:\\ArmGNU\\bin",
-      "gdbPath": "C:\\ArmGNU\\bin\\arm-none-eabi-gdb.exe",
-
-      "serverArgs": [
-        "-speed", "4000",
-        "-singlerun"
+      "gdbPath": "/usr/bin/gdb-multiarch",
+      "configFiles": [
+        "${workspaceFolder}/tools/openocd_jlink_swd_sam3x.cfg"
       ],
-
+      "searchDir": [
+        "/usr/share/openocd/scripts"
+      ],
       "runToEntryPoint": "main",
       "preLaunchTask": "Build (due2)",
-      "svdFile": "${workspaceFolder:due2}/svd/SAM3X8E.svd"
+      "svdFile": "${workspaceFolder}/svd/SAM3X8E.svd"
     },
     {
-      "name": "Debug BL (J-Link, ATSAM3X8E)",
+      "name": "Debug BL (OpenOCD+J-Link, ATSAM3X8E)",
       "type": "cortex-debug",
       "request": "launch",
-      "servertype": "jlink",
-
-      "cwd": "${workspaceFolder:due2}",
-      "executable": "${workspaceFolder:due2}/build/due_bootloader.elf",
-
+      "servertype": "openocd",
+      "cwd": "${workspaceFolder}",
+      "executable": "${workspaceFolder}/build/due_bootloader.elf",
       "device": "ATSAM3X8E",
       "interface": "swd",
-
-      "serverpath": "C:\\JLink\\JLinkGDBServerCL.exe",
-
-      "armToolchainPath": "C:\\ArmGNU\\bin",
-      "gdbPath": "C:\\ArmGNU\\bin\\arm-none-eabi-gdb.exe",
-
-      "serverArgs": [
-        "-speed", "4000",
-        "-singlerun"
+      "gdbPath": "/usr/bin/gdb-multiarch",
+      "configFiles": [
+        "${workspaceFolder}/tools/openocd_jlink_swd_sam3x.cfg"
       ],
-
+      "searchDir": [
+        "/usr/share/openocd/scripts"
+      ],
       "runToEntryPoint": "main",
       "preLaunchTask": "Build (due2)",
-      "svdFile": "${workspaceFolder:due2}/svd/SAM3X8E.svd"
+      "svdFile": "${workspaceFolder}/svd/SAM3X8E.svd"
     }
   ]
 }

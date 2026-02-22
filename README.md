@@ -1,34 +1,36 @@
-Для проекта необходимо чтобы были установлены нижеуказанные продукты по
-соответствующим путям
+Проект рассчитан на сборку и отладку в WSL2 (Ubuntu 24.04+) и на Linux-хосте.
 
-C:\ArmGNU
-C:\CMake
-C:\Ninja
-C:\JLink
+Необходимые пакеты:
+- `cmake`
+- `ninja-build`
+- `gcc-arm-none-eabi`
+- `gdb-multiarch`
+- `openocd`
 
-и была правильно настроена переменная PATH
+Установка (Ubuntu):
+```bash
+sudo apt update
+sudo apt install -y cmake ninja-build gcc-arm-none-eabi gdb-multiarch openocd
+```
 
-Это шаблон проекта.
-Каталоги cmsis, startup, svd, cmake, linker - одинаковые для всех проектов
-Файл .gitignore - одинаковый для всех проектов
+Сборка:
+```bash
+cmake -G Ninja -S . -B build -DCMAKE_TOOLCHAIN_FILE=cmake/arm-none-eabi.cmake -DCMAKE_BUILD_TYPE=Release
+cmake --build build --target all -j
+```
 
-В файле .\tools\jlink_flash_sam3x8e.jlink изменить путь для билдов
-
- В файлах lanch.json, settings.json и task.json в выражение "${workspaceFolder:empty_project}" необходимо
- будет заменить empty_project на название проекта
-
- Весь изменяемый код находится в каталогах params и src
-
----
-
-Новые target-ы сборки:
+Target-ы сборки:
 - `due_bootloader` (`build/due_bootloader.elf`)
 - `due_app` (`build/due_app.elf`)
 
-Новые задачи прошивки:
-- `Flash Bootloader (J-Link, SAM3X8E, Due2)`
-- `Flash APP (J-Link, SAM3X8E, Due2)`
-- `Flash Full (BL+APP, J-Link, SAM3X8E, Due2)`
+VS Code задачи прошивки (WSL/Linux):
+- `Flash Bootloader (OpenOCD+J-Link, SAM3X8E, Due2)`
+- `Flash APP (OpenOCD+J-Link, SAM3X8E, Due2)`
+- `Flash Full (BL+APP, OpenOCD+J-Link, Due2)`
+
+Примечания по J-Link:
+- Для `openocd` используется конфиг `tools/openocd_jlink_swd_sam3x.cfg` (J-Link + SWD + SAM3X).
+- Скрипты `tools/jlink_flash_sam3x8e*.jlink` используют относительные пути (`build/...`) и не требуют правки `C:\...` путей.
 
 Обновление через UART (`/dev/ttyS4`) с хоста:
 ```bash
@@ -43,7 +45,7 @@ make
 ```
 
 Проверенный рабочий сценарий (T113 + FTDI):
-1. Прошить `due_bootloader.elf` и `due_app.elf` (через J-Link task `Flash Full`).
+1. Прошить `due_bootloader.elf` и `due_app.elf` (через task `Flash Full`).
 2. На T113 запустить:
 ```bash
 ./uart_bl_update --port /dev/ttyS4 --baud 115200 --firmware due_app.bin
@@ -61,5 +63,3 @@ make
 
 Примечание:
 - Убедитесь, что на T113 используется актуальный `due_app.bin` (размер должен совпадать с файлом из `build/`), иначе после `RUN` можно видеть старое поведение APP.
- 
-
